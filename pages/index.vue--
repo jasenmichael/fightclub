@@ -1,0 +1,56 @@
+<template>
+  <v-layout
+    column
+    justify-center
+    align-center
+  >
+    <v-flex
+      xs12
+      sm8
+      md6
+    >
+      <v-card>
+        <v-card-title class="headline">
+          FIGHTCLUB, for old school hommies
+        </v-card-title>
+        <v-card-text>
+          <p>
+            Join our Discord channel <a
+              href="https://discord.gg/fQjMucV"
+              target="_blank"
+              title="discord"
+            >
+              here
+            </a>.
+          </p>
+          <br>
+          <p>Play games with hommies of the old school.</p>
+          <div class="text-xs-right">
+            <em><small>&mdash; Jasen Michael</small></em>
+          </div>
+          <hr class="my-3">
+          <h4>Games, Docs, and Info..</h4>
+          <v-btn
+            color="primary"
+            nuxt
+            to="/wc2bne"
+          >
+            Warcraft 2 BNE
+          </v-btn>
+        </v-card-text>
+      </v-card>
+    </v-flex>
+  </v-layout>
+</template>
+
+<script>
+// import Logo from '~/components/Logo.vue'
+// import VuetifyLogo from '~/components/VuetifyLogo.vue'
+
+export default {
+  // components: {
+  //   Logo,
+  //   VuetifyLogo
+  // }
+}
+</script>

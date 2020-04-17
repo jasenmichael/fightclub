@@ -1,0 +1,37 @@
+{
+  "name": "fightclub",
+  "version": "1.0.0",
+  "description": "FIGHTCLUB for old school hommies",
+  "author": "jasenmichael",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
+    "build": "nuxt build",
+    "start": "cross-env NODE_ENV=production node server/index.js",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/dotenv": "^1.4.0",
+    "@nuxtjs/pwa": "^3.0.0-0",
+    "cross-env": "^5.2.0",
+    "dotenv": "^8.2.0",
+    "execa": "^4.0.0",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
+    "nuxt": "^2.0.0",
+    "nuxt-clipboard2": "^0.2.1",
+    "read-ini-file": "^3.0.0",
+    "socket.io": "^2.3.0",
+    "vue-clipboard2": "^0.3.1",
+    "vue-socket.io": "^3.0.7"
+  },
+  "devDependencies": {
+    "@nuxtjs/moment": "^1.6.0",
+    "@nuxtjs/vuetify": "^1.0.0",
+    "node-sass": "^4.13.1",
+    "nodemon": "^1.18.9",
+    "sass-loader": "^8.0.2"
+  }
+}
