@@ -56,7 +56,7 @@
       </v-tab-item>
 
       <v-tab-item class="main">
-        <pvpgn />
+        <Chat />
       </v-tab-item>
     </v-tabs>
     <!-- <v-layout> -->
@@ -65,11 +65,11 @@
 </template>
 
 <script>
-import pvpgn from '~/components/pvpgn.vue'
+import Chat from '~/components/Chat.vue'
 
 export default {
   components: {
-    pvpgn
+    Chat
   },
   data() {
     return {}
@@ -78,7 +78,7 @@ export default {
 </script>
 
 <style scoped>
-.main {
-  /* min-height: calc(100vh - 172px); */
-}
+/* .main {
+  min-height: calc(100vh - 172px);
+} */
 </style>

@@ -1,5 +1,6 @@
 export const state = () => ({
   user: {},
+  user_data: {},
   messages: [{
       name: 'ipeon',
       text: "no way, is that really you chizzy?",
@@ -37,6 +38,9 @@ export const state = () => ({
 export const mutations = {
   setUser(state, user) {
     state.user = user;
+  },
+  setUserData(state, userData) {
+    state.user_data = userData;
   },
   newMessage(state, msg) {
     state.messages = [...state.messages, msg];

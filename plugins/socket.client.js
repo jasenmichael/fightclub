@@ -5,8 +5,11 @@ const apiUrl = process.env.API_URL
 
 
 export default function () {
- Vue.use(new VueSocketIO({
-   debug: false,
-   connection: apiUrl,
- }))
+  Vue.use(new VueSocketIO({
+    debug: false,
+    connection: apiUrl,
+    options: {
+      autoConnect: false
+    }
+  }))
 }

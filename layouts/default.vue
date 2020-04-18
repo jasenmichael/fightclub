@@ -26,15 +26,15 @@
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" fixed app>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn icon @click.stop="miniVariant = !miniVariant">
+      <!-- <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="clipped = !clipped">
+      </v-btn>-->
+      <!-- <v-btn icon @click.stop="clipped = !clipped">
         <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="fixed = !fixed">
+      </v-btn>-->
+      <!-- <v-btn icon @click.stop="fixed = !fixed">
         <v-icon>mdi-minus</v-icon>
-      </v-btn>
+      </v-btn>-->
 
       <!-- <nuxt-link to="/" tag="div"> -->
       <v-toolbar-title
@@ -55,7 +55,16 @@
         <nuxt />
       </v-container>
     </v-content>
-    <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
+    <!-- <v-navigation-drawer v-model="drawer" :mini-variant="miniVariant" :clipped="clipped" fixed app> -->
+
+    <v-navigation-drawer
+      v-model="rightDrawer"
+      :clipped="false"
+      :permanent="rightDrawer"
+      :right="right"
+      fixed
+      app
+    >
       <v-list>
         <!-- <v-list-item @click.native="right = !right">
           <v-list-item-action>
@@ -63,6 +72,16 @@
           </v-list-item-action>
           <v-list-item-title>Switch drawer (click me)</v-list-item-title>
         </v-list-item>-->
+        <v-card flat class="ma-2">
+          <p class="ml-2 mb-0">User: {{user_data.name}}</p>
+          <p class="ml-2 mb-0">Wins: {{user_data.wins}}</p>
+          <p class="ml-2 mb-0">Losses: {{user_data.losses}}</p>
+          <p class="ml-2 mb-0">Draws: {{user_data.draws}}</p>
+          <p class="ml-2 mb-0">Chat Room: {{user.room}}</p>
+        </v-card>
+
+        <!-- <pre>userData:{{user_data}}</pre>
+        <pre>user:{{user}}</pre> -->
       </v-list>
     </v-navigation-drawer>
     <v-footer :fixed="fixed" app>
@@ -72,10 +91,12 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
+
 export default {
   data: () => {
     return {
-      clipped: false,
+      clipped: true,
       drawer: false,
       fixed: false,
       items: [
@@ -100,6 +121,12 @@ export default {
       rightDrawer: false,
       title: 'FIGHTCLUB'
     }
+  },
+  computed: {
+    ...mapState(['user', 'user_data', 'users'])
+  },
+  methods: {
+    // ...mapMutations(['setUser', 'newMessage', 'updateUsers', 'clearData'])
   }
 }
 </script>

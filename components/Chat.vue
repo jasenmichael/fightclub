@@ -1,15 +1,18 @@
 <template>
-  <v-container>
+  <v-container fluid class="pt-4">
     <v-row dense>
       <!-- chat section -->
       <v-col cols="12" lg="9" sm="8" order="1" order-sm="0">
-        <v-card style="height:100%;">
+        <v-card flat outlined rounded style="height:100%;">
           <!-- login -->
-          <v-card-text v-if="!loggedIn" :style="`font-size:22px;height:calc(100vh - ${300}px);`">
+          <v-card-text
+            v-if="!loggedIn && token === ''"
+            :style="`font-size:22px;height:calc(100vh - ${300}px);`"
+          >
             <v-layout column justify-center align-center>
               <h2 class="fighter pb-3">FIGHTCLUB Chat</h2>
               <!-- <h3 class="fighter">Login</h3> -->
-              <v-container fluid>
+              <v-container style="max-width:400px;">
                 <v-form rounded @submit.prevent="login(name, password)">
                   <v-text-field v-model="name" label="Name" required></v-text-field>
                   <v-text-field v-model="password" label="Password" type="password" required></v-text-field>
@@ -25,7 +28,7 @@
                       >Login</v-btn>
                     </v-col>
                   </v-row>
-                  <v-checkbox v-model="stayLoggedIn" label="Remember me"></v-checkbox>
+                  <v-checkbox v-model="rememberMe" label="Remember me"></v-checkbox>
                   <p v-if="loginError" class="red--text">{{loginError}}</p>
                   <p v-else>&nbsp;</p>
                 </v-form>
@@ -194,7 +197,7 @@ export default {
     return {
       connected: false,
       loggedIn: false,
-      stayLoggedIn: false,
+      rememberMe: false,
       serverData: {},
       // gatewayInfoDialog: false,
       id: 0,
@@ -203,7 +206,7 @@ export default {
         Zone: 0,
         Ip: '35.184.41.128'
       },
-      user_data: {},
+      // user_data: {},
       name: '',
       password: '',
       token: '',
@@ -211,24 +214,38 @@ export default {
       message: ''
     }
   },
-  async mounted() {
+  async beforeMount() {
+    this.$socket.connect()
     if (process.browser) {
       this.token = localStorage.getItem('token') || ''
       this.name = localStorage.getItem('name') || ''
-      this.password = localStorage.getItem('password') || ''
-      if (this.name !== '' && this.password !== '') {
-        this.stayLoggedIn = true
+      // this.password = localStorage.getItem('password') || ''
+      if (this.name !== '') {
+        this.rememberMe = true
       }
       if (this.token !== '') {
         let tokenValid = !(await this.pvpgn('')).error
-        console.log('tokenValid', tokenValid)
+        console.log('tokenValid, setting loggedIn', tokenValid)
+        if (tokenValid) {
+          let user = await this.getUserByToken()
+          await this.setUserData(user)
+          await this.connectChat()
+          this.loggedIn = true
+        } else {
+          this.token = ''
+          localStorage.removeItem('token')
+          this.loggedIn = false
+        }
       }
     }
+
     // get server status at mount, and every 30 seconds after
     await this.getServerData()
     setInterval(async () => {
       await this.getServerData()
     }, 30000)
+  },
+  mounted() {
   },
   sockets: {
     updateUsers(users) {
@@ -242,7 +259,13 @@ export default {
     ...mapState(['user', 'users', 'messages'])
   },
   methods: {
-    ...mapMutations(['setUser', 'newMessage', 'updateUsers', 'clearData']),
+    ...mapMutations([
+      'setUser',
+      'setUserData',
+      'newMessage',
+      'updateUsers',
+      'clearData'
+    ]),
     now() {
       return this.$moment().format('MMMM Do YYYY, h:mm:ss a')
       // return this.$moment().format('M-D-YYYY, h:mma')
@@ -266,39 +289,28 @@ export default {
         password
       }
       let data = (await this.$axios.post('/api/warcraft2bne/login', body)).data
-      console.log(this.stayLoggedIn)
+      console.log(this.rememberMe)
       // set token, loggedIn, user_data
       if (data.token) {
         this.token = data.token
+        localStorage.setItem('token', data.token)
         this.loggedIn = true
-        this.user_data = data
-        this.user_data.token = undefined
-        this.name = this.user_data.name
+        let user_data = data
+        user_data.token = undefined
+        this.setUserData(user_data)
+        this.name = user_data.name
         setTimeout(() => {
           this.scrollChat()
         }, 8)
 
         // set local storage
-        if (this.stayLoggedIn) {
-          localStorage.setItem('token', this.token)
+        if (this.rememberMe) {
           localStorage.setItem('name', this.name)
-          localStorage.setItem('password', this.password)
+          // localStorage.setItem('password', this.password)
         }
 
-        // conect to socket chat
-        const user = {
-          name: this.name,
-          room: 'FIGHTCLUB',
-          id: 0
-        }
-        // create socket user ith login name
-        this.$socket.emit('createUser', user, data => {
-          user.id = data.id
-          this.setUser(user)
-          // this.$router.push('/chat')
-          this.$socket.emit('joinRoom', user)
-        })
-        // join room
+        // connect chat ===================
+        this.connectChat()
       }
       if (data.error) {
         this.loginError = data.error
@@ -306,6 +318,18 @@ export default {
           this.loginError = ''
         }, 1000)
       }
+    },
+    async getUserByToken() {
+      const options = {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      }
+      return (await this.$axios.post('/api/warcraft2bne/users/me', {}, options))
+        .data
+    },
+    async getUserByName() {
+      return (await this.$axios.get(`/api/warcraft2bne/users/${name}`)).data
     },
     async pvpgn(command) {
       const options = {
@@ -316,6 +340,22 @@ export default {
       return (
         await this.$axios.post(`/api/warcraft2bne/?${command}`, {}, options)
       ).data
+    },
+    async connectChat() {
+      // conect to socket chat
+      const user = {
+        name: this.name,
+        room: 'FIGHTCLUB',
+        id: 0
+      }
+      // create socket user with login name
+      this.$socket.emit('createUser', user, data => {
+        user.id = data.id
+        this.setUser(user)
+        // this.$router.push('/chat')
+        // join room
+        this.$socket.emit('joinRoom', user)
+      })
     },
     async sendMessage() {
       if (this.message !== '') {

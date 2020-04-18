@@ -8,7 +8,6 @@ const secret = 'q1x9isv*2dag+okv-yf2lq6qjp(3l1v8v5*+wkfy4w43nmk6b'
 const datFile = '/usr/local/pvpgn/var/pvpgn/status/server.dat'
 const userDir = '/usr/local/pvpgn/var/pvpgn/users'
 
-
 // ROUTES
 app.get('/', async (req, res) => {
   const serverData = await getServerData()
@@ -81,6 +80,26 @@ app.get('/users/:nameOrId', async (req, res) => {
   const nameOrId = req.params.nameOrId
   const user = await getUser(nameOrId)
   res.json(user)
+})
+app.post('/users/me', async (req, res) => {
+  const token = req.headers.authorization.replace('Bearer ', '') || false
+  if (!token) {
+    res.json({
+      error: 'token not provided'
+    })
+  }
+  const isTokenValid = await tokenValid(token)
+  if (!isTokenValid) {
+    res.json({
+      error: 'invalid token'
+    })
+  } else {
+    // get user by token
+    let name = (await tokenValid(token)).user
+    // get user
+    let user = await getUser(name)
+    res.json(user)
+  }
 })
 
 // FUNCTIONS
@@ -171,7 +190,9 @@ const getUserData = async (name) => {
     last_game: data["Record\\W2BN\\0\\last game"] || undefined,
     draws: data["Record\\W2BN\\0\\draws"] || 0,
     wins: data["Record\\W2BN\\0\\wins"] || 0,
-    losses: data["Record\\W2BN\\0\\losses"] || 0
+    losses: data["Record\\W2BN\\0\\losses"] || 0,
+    // admin: data["BNET\\auth\\command_groups"] === "255" ? true : undefined
+    admin: data["BNET\\auth\\admin"] || undefined
   }
   return userData
 }
