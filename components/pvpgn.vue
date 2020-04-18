@@ -33,7 +33,7 @@
               <p class="pt-4 mt-4">
                 Join us on
                 <a href="https://discord.gg/fQjMucV" target="_blank">Discord</a>
-                to request an account.
+                to get an account.
               </p>
             </v-layout>
           </v-card-text>
