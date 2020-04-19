@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-tabs fixed-tabs>
-      <v-tab>Info/Downloads</v-tab>
-      <v-tab>Chat/Server Stats</v-tab>
+    <v-tabs fixed-tabs v-model="selectedTab">
+      <v-tab id="downloads">Info/Downloads</v-tab>
+      <v-tab id="chat">Chat/Server Stats</v-tab>
 
       <v-tab-item class="main">
         <v-img src="/wc2-banner2.jpg" height="250" class="grey darken-4"></v-img>
@@ -72,7 +72,16 @@ export default {
     Chat
   },
   data() {
-    return {}
+    return {
+      selectedTab: 0
+    }
+  },
+  // watchQuery(query){ return},
+  mounted() {
+    console.log(this.$route.query.login)
+    if (this.$route.query.login) {
+      this.selectedTab = 1
+    }
   }
 }
 </script>

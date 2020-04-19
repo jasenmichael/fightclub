@@ -46,8 +46,11 @@
       <!-- </nuxt-link> -->
 
       <v-spacer />
-      <v-btn icon @click.stop="rightDrawer = !rightDrawer">
-        <v-icon>mdi-menu</v-icon>
+      <v-btn v-if="user.name && user_data.name && user.id" icon @click.stop="rightDrawer = !rightDrawer">
+        <v-icon>mdi-account-outline</v-icon>
+      </v-btn>
+      <v-btn href="?login=true" icon v-else>
+        <v-icon>mdi-account-off-outline</v-icon>
       </v-btn>
     </v-app-bar>
     <v-content>
@@ -80,8 +83,8 @@
           <p class="ml-2 mb-0">Chat Room: {{user.room}}</p>
         </v-card>
 
-        <!-- <pre>userData:{{user_data}}</pre>
-        <pre>user:{{user}}</pre> -->
+        <pre>userData:{{user_data}}</pre>
+        <pre>user:{{user}}</pre>
       </v-list>
     </v-navigation-drawer>
     <v-footer :fixed="fixed" app>

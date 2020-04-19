@@ -7,7 +7,7 @@
           <!-- login -->
           <v-card-text
             v-if="!loggedIn && token === ''"
-            :style="`font-size:22px;height:calc(100vh - ${300}px);`"
+            :style="`font-size:22px;height:calc(100vh - ${310}px);`"
           >
             <v-layout column justify-center align-center>
               <h2 class="fighter pb-3">FIGHTCLUB Chat</h2>
@@ -49,7 +49,7 @@
                 <div
                   class="chat-wrapper"
                   id="chat"
-                  :style="`height:calc(100vh - ${300}px);width:100%;`"
+                  :style="`height:calc(100vh - ${310}px);width:100%;`"
                 >
                   <!-- <pre>{{user}}</pre> -->
                   <div class="chat">
@@ -198,7 +198,7 @@ export default {
       connected: false,
       loggedIn: false,
       rememberMe: false,
-      serverData: {},
+      // serverData: {},
       // gatewayInfoDialog: false,
       id: 0,
       gatewayInfo: {
@@ -225,7 +225,7 @@ export default {
       }
       if (this.token !== '') {
         let tokenValid = !(await this.pvpgn('')).error
-        console.log('tokenValid, setting loggedIn', tokenValid)
+        // console.log('tokenValid, setting loggedIn', tokenValid)
         if (tokenValid) {
           let user = await this.getUserByToken()
           await this.setUserData(user)
@@ -245,8 +245,7 @@ export default {
       await this.getServerData()
     }, 30000)
   },
-  mounted() {
-  },
+  mounted() {},
   sockets: {
     updateUsers(users) {
       this.updateUsers(users)
@@ -256,7 +255,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['user', 'users', 'messages'])
+    ...mapState(['user', 'users', 'serverData', 'messages'])
   },
   methods: {
     ...mapMutations([
@@ -264,7 +263,8 @@ export default {
       'setUserData',
       'newMessage',
       'updateUsers',
-      'clearData'
+      'clearData',
+      'setServerData'
     ]),
     now() {
       return this.$moment().format('MMMM Do YYYY, h:mm:ss a')
@@ -279,7 +279,13 @@ export default {
         })
       if (!serverData.error && serverData.status === 200) {
         this.connected = true
-        this.serverData = serverData.data
+        // this.serverData = serverData.data
+        this.setServerData(serverData.data)
+        // if (serverData.data != this.serverData) {
+        //   console.log('changes to server, updating state')
+        // } else {
+        //   console.log('no changes to server, not updating state')
+        // }
       }
     },
     async login(name, password) {
@@ -289,7 +295,7 @@ export default {
         password
       }
       let data = (await this.$axios.post('/api/warcraft2bne/login', body)).data
-      console.log(this.rememberMe)
+      // console.log(this.rememberMe)
       // set token, loggedIn, user_data
       if (data.token) {
         this.token = data.token
@@ -365,7 +371,7 @@ export default {
           text: this.message,
           time: this.now()
         }
-        console.log(message)
+        // console.log(message)
         // this.messages.push(message)
         // send msg via socket
         this.$socket.emit('createMessage', message, () => {
@@ -384,7 +390,7 @@ export default {
       }
     },
     async copyToClip(text) {
-      console.log(`copying ${text} to clipboard`)
+      // console.log(`copying ${text} to clipboard`)
       try {
         await this.$copyText(text)
       } catch (e) {
@@ -406,7 +412,7 @@ export default {
           'connected to chat, make sure to talk shit..'
         )
       ) {
-        console.log('play user connected sound...')
+        // console.log('play user connected sound...')
         // play user connnected sound
         let sound =
           'http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3'
