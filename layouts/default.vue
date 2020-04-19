@@ -46,7 +46,11 @@
       <!-- </nuxt-link> -->
 
       <v-spacer />
-      <v-btn v-if="user.name && user_data.name && user.id" icon @click.stop="rightDrawer = !rightDrawer">
+      <v-btn
+        v-if="user.name && user_data.name && user.id"
+        icon
+        @click.stop="rightDrawer = !rightDrawer"
+      >
         <v-icon>mdi-account-outline</v-icon>
       </v-btn>
       <v-btn href="?login=true" icon v-else>
@@ -61,31 +65,53 @@
     <!-- <v-navigation-drawer v-model="drawer" :mini-variant="miniVariant" :clipped="clipped" fixed app> -->
 
     <v-navigation-drawer
+      style="display:flex;flex-direction:column;"
       v-model="rightDrawer"
       :clipped="false"
-      :permanent="rightDrawer"
+      :permanent="false"
       :right="right"
       fixed
       app
     >
       <v-list>
-        <!-- <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light>mdi-repeat</v-icon>
+        <v-list-item>
+          <!-- <v-icon light>mdi-repeat</v-icon> -->
+          <!-- <v-list-item-action>
           </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>-->
-        <v-card flat class="ma-2">
-          <p class="ml-2 mb-0">User: {{user_data.name}}</p>
-          <p class="ml-2 mb-0">Wins: {{user_data.wins}}</p>
-          <p class="ml-2 mb-0">Losses: {{user_data.losses}}</p>
-          <p class="ml-2 mb-0">Draws: {{user_data.draws}}</p>
-          <p class="ml-2 mb-0">Chat Room: {{user.room}}</p>
-        </v-card>
+          <v-list-item-title>Switch drawer (click me)</v-list-item-title>-->
 
-        <pre>userData:{{user_data}}</pre>
-        <pre>user:{{user}}</pre>
+          <div class="ma-2">
+            <p class="ml-2 mb-0">User: {{user_data.name}}</p>
+            <p class="ml-2 mb-0">Wins: {{user_data.wins}}</p>
+            <p class="ml-2 mb-0">Losses: {{user_data.losses}}</p>
+            <p class="ml-2 mb-0">Draws: {{user_data.draws}}</p>
+            <p class="ml-2 mb-0">Chat Room: {{user.room}}</p>
+          </div>
+        </v-list-item>
       </v-list>
+
+      <template v-slot:append>
+        <v-row align="center" justify="center">
+          <div class="pa-2">
+            <p class="text-center">Admin Server Controls</p>
+            <v-btn-toggle mandatory class="ml-auto mb-6">
+              <v-btn>
+                <v-icon>mdi-reload</v-icon>
+              </v-btn>
+              <v-btn>
+                <v-icon>mdi-play</v-icon>
+              </v-btn>
+              <v-btn>
+                <v-icon>mdi-stop</v-icon>
+              </v-btn>
+            </v-btn-toggle>
+            <v-btn block>Logout</v-btn>
+          </div>
+        </v-row>
+      </template>
+
+      <!-- <pre>userData:{{user_data}}</pre>
+      <pre>user:{{user}}</pre>-->
     </v-navigation-drawer>
     <v-footer :fixed="fixed" app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
@@ -126,10 +152,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['user', 'user_data', 'users'])
+    ...mapState(['user', 'user_data', 'users', 'token'])
   },
   methods: {
-    // ...mapMutations(['setUser', 'newMessage', 'updateUsers', 'clearData'])
+    ...mapMutations(['setServerData'])
   }
 }
 </script>

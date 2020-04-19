@@ -33,10 +33,14 @@ export const state = () => ({
       time: 'April 16th 2020, 11:48:59 pm'
     }
   ],
-  users: []
+  users: [],
+  token: ''
 })
 
 export const mutations = {
+  setToken(state, token) {
+    state.token = token;
+  },
   setUser(state, user) {
     state.user = user;
   },

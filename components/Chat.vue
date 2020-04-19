@@ -190,7 +190,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
   data: () => {
@@ -209,15 +209,16 @@ export default {
       // user_data: {},
       name: '',
       password: '',
-      token: '',
+      // token: '',
       loginError: '',
       message: ''
     }
   },
-  async beforeMount() {
+  async mounted() {
     this.$socket.connect()
     if (process.browser) {
-      this.token = localStorage.getItem('token') || ''
+      let token = localStorage.getItem('token') || ''
+      this.setToken(token)
       this.name = localStorage.getItem('name') || ''
       // this.password = localStorage.getItem('password') || ''
       if (this.name !== '') {
@@ -230,10 +231,12 @@ export default {
           let user = await this.getUserByToken()
           await this.setUserData(user)
           await this.connectChat()
+          this.setToken(token)
           this.loggedIn = true
         } else {
           this.token = ''
           localStorage.removeItem('token')
+          this.setToken('')
           this.loggedIn = false
         }
       }
@@ -245,7 +248,7 @@ export default {
       await this.getServerData()
     }, 30000)
   },
-  mounted() {},
+  // mounted() {},
   sockets: {
     updateUsers(users) {
       this.updateUsers(users)
@@ -255,7 +258,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['user', 'users', 'serverData', 'messages'])
+    ...mapState(['user', 'users', 'serverData', 'messages', 'token'])
   },
   methods: {
     ...mapMutations([
@@ -264,7 +267,8 @@ export default {
       'newMessage',
       'updateUsers',
       'clearData',
-      'setServerData'
+      'setServerData',
+      'setToken'
     ]),
     now() {
       return this.$moment().format('MMMM Do YYYY, h:mm:ss a')
@@ -295,10 +299,11 @@ export default {
         password
       }
       let data = (await this.$axios.post('/api/warcraft2bne/login', body)).data
-      // console.log(this.rememberMe)
+      // console.log(data)
       // set token, loggedIn, user_data
       if (data.token) {
-        this.token = data.token
+        this.setToken(data.token)
+        // this.token = data.token
         localStorage.setItem('token', data.token)
         this.loggedIn = true
         let user_data = data
@@ -385,6 +390,7 @@ export default {
       if (process.browser) {
         setTimeout(() => {
           let div = document.getElementById('chat')
+          // console.log(div)
           div.scrollTop = div.scrollHeight
         }, 8)
       }
