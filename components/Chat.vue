@@ -196,20 +196,15 @@ export default {
   data: () => {
     return {
       connected: false,
-      loggedIn: false,
       rememberMe: false,
-      // serverData: {},
-      // gatewayInfoDialog: false,
       id: 0,
       gatewayInfo: {
         Name: 'FIGHTCLUB',
         Zone: 0,
         Ip: '35.184.41.128'
       },
-      // user_data: {},
       name: '',
       password: '',
-      // token: '',
       loginError: '',
       message: ''
     }
@@ -220,24 +215,20 @@ export default {
       let token = localStorage.getItem('token') || ''
       this.setToken(token)
       this.name = localStorage.getItem('name') || ''
-      // this.password = localStorage.getItem('password') || ''
       if (this.name !== '') {
         this.rememberMe = true
       }
       if (this.token !== '') {
         let tokenValid = !(await this.pvpgn('')).error
-        // console.log('tokenValid, setting loggedIn', tokenValid)
         if (tokenValid) {
           let user = await this.getUserByToken()
           await this.setUserData(user)
           await this.connectChat()
-          this.setToken(token)
-          this.loggedIn = true
+          this.setLoggedIn()
         } else {
-          this.token = ''
           localStorage.removeItem('token')
           this.setToken('')
-          this.loggedIn = false
+          this.setLoggedOut()
         }
       }
     }
@@ -258,18 +249,26 @@ export default {
     }
   },
   computed: {
-    ...mapState(['user', 'users', 'serverData', 'messages', 'token'])
+    ...mapState({
+      user: 'user',
+      users: 'users',
+      loggedIn: state => state.auth.loggedIn,
+      serverData: state => state.pvpgn.serverData,
+      messages: 'messages',
+      token: state => state.auth.token
+    })
   },
   methods: {
-    ...mapMutations([
-      'setUser',
-      'setUserData',
-      'newMessage',
-      'updateUsers',
-      'clearData',
-      'setServerData',
-      'setToken'
-    ]),
+    ...mapMutations({
+      setUser: 'setUser',
+      setUserData: 'setUserData',
+      setLoggedIn: 'auth/setLoggedIn',
+      newMessage: 'newMessage',
+      updateUsers: 'updateUsers',
+      clearData: 'clearData',
+      setServerData: 'pvpgn/setServerData',
+      setToken: 'auth/setToken'
+    }),
     now() {
       return this.$moment().format('MMMM Do YYYY, h:mm:ss a')
       // return this.$moment().format('M-D-YYYY, h:mma')
@@ -283,29 +282,19 @@ export default {
         })
       if (!serverData.error && serverData.status === 200) {
         this.connected = true
-        // this.serverData = serverData.data
         this.setServerData(serverData.data)
-        // if (serverData.data != this.serverData) {
-        //   console.log('changes to server, updating state')
-        // } else {
-        //   console.log('no changes to server, not updating state')
-        // }
       }
     },
     async login(name, password) {
-      // get token
       let body = {
         user: name,
         password
       }
       let data = (await this.$axios.post('/api/warcraft2bne/login', body)).data
-      // console.log(data)
-      // set token, loggedIn, user_data
       if (data.token) {
         this.setToken(data.token)
-        // this.token = data.token
         localStorage.setItem('token', data.token)
-        this.loggedIn = true
+        this.setLoggedIn()
         let user_data = data
         user_data.token = undefined
         this.setUserData(user_data)
@@ -314,13 +303,9 @@ export default {
           this.scrollChat()
         }, 8)
 
-        // set local storage
         if (this.rememberMe) {
           localStorage.setItem('name', this.name)
-          // localStorage.setItem('password', this.password)
         }
-
-        // connect chat ===================
         this.connectChat()
       }
       if (data.error) {
@@ -363,8 +348,6 @@ export default {
       this.$socket.emit('createUser', user, data => {
         user.id = data.id
         this.setUser(user)
-        // this.$router.push('/chat')
-        // join room
         this.$socket.emit('joinRoom', user)
       })
     },
@@ -376,11 +359,7 @@ export default {
           text: this.message,
           time: this.now()
         }
-        // console.log(message)
-        // this.messages.push(message)
-        // send msg via socket
         this.$socket.emit('createMessage', message, () => {
-          // this.text = ''
           this.message = ''
           this.scrollChat()
         })
@@ -390,13 +369,11 @@ export default {
       if (process.browser) {
         setTimeout(() => {
           let div = document.getElementById('chat')
-          // console.log(div)
           div.scrollTop = div.scrollHeight
         }, 8)
       }
     },
     async copyToClip(text) {
-      // console.log(`copying ${text} to clipboard`)
       try {
         await this.$copyText(text)
       } catch (e) {
@@ -418,8 +395,6 @@ export default {
           'connected to chat, make sure to talk shit..'
         )
       ) {
-        // console.log('play user connected sound...')
-        // play user connnected sound
         let sound =
           'http://soundbible.com/mp3/Air Plane Ding-SoundBible.com-496729130.mp3'
         this.playSound(sound)

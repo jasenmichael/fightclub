@@ -46,11 +46,8 @@
       <!-- </nuxt-link> -->
 
       <v-spacer />
-      <v-btn
-        v-if="user.name && user_data.name && user.id"
-        icon
-        @click.stop="rightDrawer = !rightDrawer"
-      >
+      <!-- v-if="user.name && user_data.name && user.id" -->
+      <v-btn v-if="loggedIn" icon @click.stop="rightDrawer = !rightDrawer">
         <v-icon>mdi-account-outline</v-icon>
       </v-btn>
       <v-btn href="?login=true" icon v-else>
@@ -90,28 +87,25 @@
         </v-list-item>
       </v-list>
 
+      <!-- pvpgn restart, start, stop -->
       <template v-slot:append>
         <v-row align="center" justify="center">
-          <div class="pa-2">
             <p class="text-center">Admin Server Controls</p>
-            <v-btn-toggle mandatory class="ml-auto mb-6">
-              <v-btn>
+            <v-btn-toggle block mandatory tile :value="serverData.status === 'online' ? 1 : 2" class="pa-0 mb-6">
+              <v-btn @click="pvpgn('restart')" :disabled="serverData.status !== 'online'">
                 <v-icon>mdi-reload</v-icon>
               </v-btn>
-              <v-btn>
+              <v-btn @click="pvpgn('start')" :disabled="serverData.status === 'online'">
                 <v-icon>mdi-play</v-icon>
               </v-btn>
-              <v-btn>
+              <v-btn @click="pvpgn('stop')" :disabled="serverData.status === 'stopped'">
                 <v-icon>mdi-stop</v-icon>
               </v-btn>
             </v-btn-toggle>
             <v-btn block>Logout</v-btn>
-          </div>
         </v-row>
       </template>
-
-      <!-- <pre>userData:{{user_data}}</pre>
-      <pre>user:{{user}}</pre>-->
+      <!-- pvpgn restart, start, stop -->
     </v-navigation-drawer>
     <v-footer :fixed="fixed" app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
@@ -120,7 +114,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
   data: () => {
@@ -152,10 +146,22 @@ export default {
     }
   },
   computed: {
-    ...mapState(['user', 'user_data', 'users', 'token'])
+    // ...mapState(['user', 'user_data', 'users', 'token'])
+    ...mapState({
+      user: 'user',
+      user_data: 'user_data',
+      users: 'users',
+      loggedIn: state => state.auth.loggedIn,
+      serverData: state => state.pvpgn.serverData,
+      // messages: 'messsages',
+      token: state => state.auth.token
+    })
   },
   methods: {
-    ...mapMutations(['setServerData'])
+    // ...mapMutations({ setServerData: 'pvpgn/setServerData' })
+    ...mapActions({
+      pvpgn: 'pvpgn/pvpgn'
+    })
   }
 }
 </script>

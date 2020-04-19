@@ -1,7 +1,7 @@
 export const state = () => ({
   user: {},
   user_data: {},
-  serverData: {},
+  // serverData: {},
   messages: [{
       name: 'ipeon',
       text: "no way, is that really you chizzy?",
@@ -34,22 +34,22 @@ export const state = () => ({
     }
   ],
   users: [],
-  token: ''
+  // token: ''
 })
 
 export const mutations = {
-  setToken(state, token) {
-    state.token = token;
-  },
+  // setToken(state, token) {
+  //   state.token = token;
+  // },
   setUser(state, user) {
     state.user = user;
   },
   setUserData(state, userData) {
     state.user_data = userData;
   },
-  setServerData(state, data) {
-    state.serverData = data;
-  },
+  // setServerData(state, data) {
+  //   state.serverData = data;
+  // },
   newMessage(state, msg) {
     state.messages = [...state.messages, msg];
   },

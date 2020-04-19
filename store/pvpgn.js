@@ -1,35 +1,25 @@
-// export const state = () => ({
-//   serverData: {},
-// })
+import axios from 'axios'
 
-// export const mutations = {
-//   setServerData(state, data) {
-//     state.serverData = data;
-//   }
-// }
+export const state = () => ({
+  serverData: {},
+})
 
-// export const actions = {
-//   async startPvpgn({commit}) {
-//     const data = await pvpgn('start')
-//     commit('setServerData', data)
-//   },
-//   async restartPvpgn({commit}) {
-//     const data = await pvpgn('restart')
-//     commit('setServerData', data)
-//   },
-//   async stopPvpgn({commit}) {
-//     const data = await pvpgn('stop')
-//     commit('setServerData', data)
-//   }
-// }
+export const mutations = {
+  setServerData(state, data) {
+    state.serverData = data;
+  }
+}
 
-// const pvpgn = async (cmd) => {
-//   const options = {
-//     headers: {
-//       Authorization: `Bearer ${store.state.token}`
-//     }
-//   }
-//   return (
-//     await this.$axios.post(`/api/warcraft2bne/?${cmd}`, {}, options)
-//   ).data
-// }
+export const actions = {
+  async pvpgn({rootState, commit}, cmd) {
+    // const data = await pvpgn('start', rootState.auth.token)
+    const options = {
+      headers: {
+        Authorization: `Bearer ${rootState.auth.token}`
+      }
+    }
+    const data = (await axios.post(`/api/warcraft2bne/?${cmd}`, {}, options)).data
+    console.log('pvpgn', cmd)
+    commit('setServerData', data)
+  }
+}
