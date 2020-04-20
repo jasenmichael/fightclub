@@ -135,7 +135,7 @@ export default {
           class: 'wc2',
           img: '/wc2icon.png',
           title: 'Warcraft 2 BNE',
-          // to: '/wc2bne'
+          // to: '/warcraft2'
           to: '/'
         }
       ],

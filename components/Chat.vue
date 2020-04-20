@@ -223,6 +223,7 @@ export default {
         if (tokenValid) {
           let user = await this.getUserByToken()
           await this.setUserData(user)
+          console.log('user-----', user)
           await this.connectChat()
           this.setLoggedIn()
         } else {

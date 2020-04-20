@@ -43,8 +43,12 @@ module.exports = {
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
-    '@nuxtjs/dotenv'
+    '@nuxtjs/dotenv',
+    '@nuxtjs/auth'
   ],
+  auth: {
+    // Options
+  },
   serverMiddleware: [
     '~/server/routes'
   ],

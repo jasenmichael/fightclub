@@ -5,7 +5,7 @@
       <v-tab>Chat/Server Stats</v-tab>
 
       <v-tab-item class="main">
-        <v-img src="/wc2-banner2.jpg" height="250" class="grey darken-4"></v-img>
+        <v-img src="/wc2-banner2.jpg" max-height="350" class="grey darken-4"></v-img>
         <v-flex class="text-center">
           <!-- <NuxtLink to="/">Fightclub Home</NuxtLink> -->
           <blockquote class="blockquote">
