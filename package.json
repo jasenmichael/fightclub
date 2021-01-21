@@ -23,7 +23,7 @@
     "nuxt": "^2.0.0",
     "nuxt-clipboard2": "^0.2.1",
     "read-ini-file": "^3.0.0",
-    "socket.io": "^2.3.0",
+    "socket.io": "^2.4.0",
     "vue-clipboard2": "^0.3.1",
     "vue-socket.io": "^3.0.7"
   },
